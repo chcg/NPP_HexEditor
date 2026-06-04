@@ -38,7 +38,7 @@ INT_PTR CALLBACK HelpDlg::run_dlgProc(UINT Message, WPARAM wParam, LPARAM)
 		_emailLink.create(::GetDlgItem(_hSelf, IDC_EMAIL_LINK), _T("mailto:jens.plugin.npp@gmx.de"));
 
 		_urlNppPlugins.init(_hInst, _hSelf);
-		_urlNppPlugins.create(::GetDlgItem(_hSelf, IDC_NPP_PLUGINS_URL), _T("http://sourceforge.net/projects/npp-plugins/"));
+		_urlNppPlugins.create(::GetDlgItem(_hSelf, IDC_NPP_PLUGINS_URL), _T("https://sourceforge.net/projects/npp-plugins/"));
 
 		/* change language */
 		NLChangeDialog(_hInst, _nppData._nppHandle, _hSelf, _T("Help"));
