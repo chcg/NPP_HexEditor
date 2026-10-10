@@ -1405,9 +1405,17 @@ eError replaceLittleToBig(HWND hTarget, HWND hSource, INT startSrc, INT startTgt
 		if (hSource)
 		{
 			/* get new text */
-			::SendMessage(hSource, SCI_SETSELECTIONSTART, startSrc, 0);
-			::SendMessage(hSource, SCI_SETSELECTIONEND, startSrc + lengthNew, 0);
-			::SendMessage(hSource, SCI_GETSELTEXT, 0, (LPARAM)text);
+			Sci_TextRangeFull textRange = {};
+			textRange.chrg.cpMin = startSrc;
+			textRange.chrg.cpMax = startSrc + lengthNew;
+			textRange.lpstrText = text;
+
+			::SendMessage(
+				hSource,
+				SCI_GETTEXTRANGEFULL,
+				0,
+				(LPARAM)&textRange
+			);
 		}
 
 		/* set in target */

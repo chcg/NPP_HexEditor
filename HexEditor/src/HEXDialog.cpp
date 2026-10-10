@@ -1095,8 +1095,11 @@ void HexEdit::Copy(void)
 			clipboard.text = (char*)new char[length + 1];
 			if (clipboard.text != NULL) {
 				if (LittleEndianChange(hSciTgt, _hParentHandle, &offset, &length) == TRUE) {
-					::SendMessage(hSciTgt, SCI_SETSEL, posBeg - offset, (LPARAM)posBeg - offset + clipboard.length);
-					::SendMessage(hSciTgt, SCI_GETSELTEXT, 0, (LPARAM)clipboard.text);
+					Sci_TextRangeFull textRange = {};
+					textRange.chrg.cpMin = posBeg - offset;
+					textRange.chrg.cpMax = textRange.chrg.cpMin + clipboard.length;
+					textRange.lpstrText = clipboard.text;
+					::SendMessage(hSciTgt, SCI_GETTEXTRANGEFULL, 0, (LPARAM)&textRange);
 				}
 			}
 			else {
@@ -1317,8 +1320,18 @@ void HexEdit::Cut(void)
 			{
 				if (LittleEndianChange(hSciTgt, _hParentHandle, &offset, &length) == TRUE)
 				{
-					::SendMessage(hSciTgt, SCI_SETSEL, posBeg - offset, (LPARAM)posBeg - offset + clipboard.length);
-					::SendMessage(hSciTgt, SCI_GETSELTEXT, 0, (LPARAM)clipboard.text);
+					Sci_TextRangeFull textRange = {};
+					textRange.chrg.cpMin = posBeg - offset;
+					textRange.chrg.cpMax = posBeg - offset + clipboard.length;
+					textRange.lpstrText = clipboard.text;
+
+					::SendMessage(
+						hSciTgt,
+						SCI_GETTEXTRANGEFULL,
+						0,
+						(LPARAM)&textRange
+					);
+
 					/* replace selection with "" */
 					if (eError::E_OK != replaceLittleToBig(_hParentHandle, NULL, 0, posBeg, clipboard.length, 0))
 					{
@@ -1697,7 +1710,7 @@ void HexEdit::Paste(void)
 
 	}
 	SciSubClassWrp::execute(SCI_ENDUNDOACTION);
-	}
+}
 
 void HexEdit::SelectAll(void)
 {
